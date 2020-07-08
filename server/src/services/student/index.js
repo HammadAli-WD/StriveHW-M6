@@ -1,13 +1,22 @@
 const express = require("express")
+const q2m = require("query-to-mongo")
 
-const studentSchema = require("./schema")
+const studentModel = require("./schema")
 
 const studentsRouter = express.Router()
 
 studentsRouter.get("/", async (req, res, next) => {
   try {
-    const students = await studentSchema.find(req.query)
-    res.send(students)
+    const query = q2m(req.query)
+    const students = await studentModel.find(query.criteria, query.options.fields)
+      .skip(query.options.skip)
+      .limit(query.options.limit)
+      .sort(query.options.sort)
+      res.send({
+        totalNumberOfStudents: students.length,
+        data: students,
+        
+      })
   } catch (error) {
     next(error)
   }
@@ -16,7 +25,7 @@ studentsRouter.get("/", async (req, res, next) => {
 studentsRouter.get("/:id", async (req, res, next) => {
   try {
     const id = req.params.id
-    const student = await studentSchema.findById(id)
+    const student = await studentModel.findById(id)
     if (student) {
       res.send(student)
     } else {
@@ -32,7 +41,7 @@ studentsRouter.get("/:id", async (req, res, next) => {
 
 studentsRouter.post("/", async (req, res, next) => {
   try {
-    const newstudent = new studentSchema(req.body)
+    const newstudent = new studentModel(req.body)
     const { _id } = await newstudent.save()
     console.log(newstudent)
     res.status(201).send(_id)
@@ -43,7 +52,7 @@ studentsRouter.post("/", async (req, res, next) => {
 
 studentsRouter.put("/:id", async (req, res, next) => {
   try {
-    const student = await studentSchema.findByIdAndUpdate(req.params.id, req.body)
+    const student = await studentModel.findByIdAndUpdate(req.params.id, req.body)
     console.log(student)
     if (student) {
       res.send("Ok")
@@ -59,7 +68,7 @@ studentsRouter.put("/:id", async (req, res, next) => {
 
 studentsRouter.delete("/:id", async (req, res, next) => {
   try {
-    const student = await studentSchema.findByIdAndDelete(req.params.id)
+    const student = await studentModel.findByIdAndDelete(req.params.id)
     if (student) {
       res.send("Deleted")
     } else {
