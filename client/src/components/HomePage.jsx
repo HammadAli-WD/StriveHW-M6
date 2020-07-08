@@ -4,14 +4,16 @@ import { Col, Container, Row, ListGroup } from 'react-bootstrap'
 
 class HomePage extends Component {
    state = {
-       students: []
+       students: {
+           data:[]
+       }
    }
 
     render() {
         return (
             <Container>
                 <Row>
-                {this.state.students.map(student => 
+                {this.state.students.data.map(student => 
                 <Col md={4} sm={6} lg={2} >
                    <ListGroup as="ul">
                     <ListGroup.Item as="li" active>
