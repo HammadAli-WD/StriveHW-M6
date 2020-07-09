@@ -56,6 +56,10 @@ const studentSchema = new Schema({
     type: String,
     required: true,
   },
+  projects: [{
+    type: mongoose.Schema.Types.ObjectId, ref:'project' ,
+    
+  }],
 })
 
 const studentModel = mongoose.model("student", studentSchema)
