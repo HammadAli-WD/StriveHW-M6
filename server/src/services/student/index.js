@@ -2,6 +2,7 @@ const express = require("express")
 const q2m = require("query-to-mongo")
 
 const studentModel = require("./schema")
+const projectModel = require("../projects/schema")
 
 const studentsRouter = express.Router()
 
@@ -17,6 +18,40 @@ studentsRouter.get("/", async (req, res, next) => {
         data: students,
         
       })
+  } catch (error) {
+    next(error)
+  }
+})
+
+studentsRouter.get("/:id/projects", async (req, res, next) => {
+  try {
+    const query = q2m(req.query)
+    const project = await projectModel.find(query.criteria, query.options.fields)
+    .skip(query.options.skip)
+      .limit(query.options.limit)
+      .sort(query.options.sort)
+    if (project) {
+
+      res.send({
+        totalNumberOfProjects: project.length,
+        projects:project})
+    } else {
+      const error = new Error()
+      error.httpStatusCode = 404
+      next(error)
+    }
+  } catch (error) {
+    console.log(error)
+    next("While reading project list a problem occurred!")
+  }
+})
+
+studentsRouter.post("/:id/projects", async (req, res, next) => {
+  try {
+    const newproject = new projectModel(req.body)
+    const { _id } = await newproject.save()
+    console.log(newproject)
+    res.status(201).send(_id)
   } catch (error) {
     next(error)
   }

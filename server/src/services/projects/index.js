@@ -5,7 +5,7 @@ const projectModel = require("./schema")
 
 const projectRouter = express.Router()
 
-projectRouter.get("/", async (req, res, next) => {
+projectRouter.get("student/:id/projects", async (req, res, next) => {
   try {
     const query = q2m(req.query)
     const projects = await projectModel.find(query.criteria, query.options.fields)
@@ -22,7 +22,7 @@ projectRouter.get("/", async (req, res, next) => {
   }
 })
 
-projectRouter.get("/:id", async (req, res, next) => {
+/* projectRouter.get("/:id", async (req, res, next) => {
   try {
     const id = req.params.id
     const project = await projectModel.findById(id)
@@ -37,7 +37,7 @@ projectRouter.get("/:id", async (req, res, next) => {
     console.log(error)
     next("While reading projects list a problem occurred!")
   }
-})
+}) */
 
 projectRouter.post("/", async (req, res, next) => {
   try {

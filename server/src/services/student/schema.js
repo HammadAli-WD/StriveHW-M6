@@ -56,10 +56,11 @@ const studentSchema = new Schema({
     type: String,
     required: true,
   },
-  projects: [{
+  projects: Array
+  /* [{
     type: mongoose.Schema.Types.ObjectId, ref:'project' ,
     
-  }],
+  }], */
 })
 
 const studentModel = mongoose.model("student", studentSchema)

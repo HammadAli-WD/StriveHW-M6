@@ -11,9 +11,8 @@ const projectSchema = new Schema({
   description: {
     type: String,
   }, 
-  student: {
-    type: mongoose.Schema.Types.ObjectId, ref:'student',
-  },  
+    
+  
 })
 
 const projectModel = mongoose.model("project", projectSchema)
