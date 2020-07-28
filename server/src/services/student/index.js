@@ -10,7 +10,7 @@ studentsRouter.get("/", async (req, res, next) => {
   try {
     const query = q2m(req.query)
     const students = await studentModel.find(query.criteria, query.options.fields)
-      .populate("projects")
+      
       .skip(query.options.skip)
       .limit(query.options.limit)
       .sort(query.options.sort)
@@ -27,7 +27,7 @@ studentsRouter.get("/", async (req, res, next) => {
 studentsRouter.get("/:id/projects", async (req, res, next) => {
   try {
     const query = q2m(req.query)
-    const project = await projectModel.find(query.criteria, query.options.fields)
+    const project = await projectModel.find({ studentid: req.params.id })
     .skip(query.options.skip)
       .limit(query.options.limit)
       .sort(query.options.sort)
@@ -35,7 +35,7 @@ studentsRouter.get("/:id/projects", async (req, res, next) => {
 
       res.send({
         totalNumberOfProjects: project.length,
-        projects:project})
+        data:project})
     } else {
       const error = new Error()
       error.httpStatusCode = 404
