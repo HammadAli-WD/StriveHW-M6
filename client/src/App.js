@@ -7,12 +7,13 @@ import { BrowserRouter as Router, Link, Switch, Route} from "react-router-dom"
 import HomePage from './components/HomePage';
 import BackOffice from './components/BackOffice';
 import Edit from "./components/Edit"
+import Student from "./components/Student"
 
 class App extends React.Component {
 
-  state = {
+  /* state = {
     books:[]
-  }
+  } */
 
   render() {
     return (
@@ -22,15 +23,16 @@ class App extends React.Component {
         <Navigation />
         
         <Switch>
+        <Route path="/student/:id" exact component={Student} />
+            
           <Route path="/details/:asin">
             <Edit />
           </Route>
           <Route path="/backoffice">
             <BackOffice />
           </Route>
-          <Route path="/" exact>
-             <HomePage />
-          </Route>
+          <Route path="/" exact component={HomePage} />
+
         </Switch>
       </div>
     </Router>
