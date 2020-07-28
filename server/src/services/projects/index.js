@@ -4,11 +4,13 @@ const q2m = require("query-to-mongo")
 const projectModel = require("./schema")
 
 const projectRouter = express.Router()
+const studentModel = require("../student/schema")
 
 projectRouter.get("/", async (req, res, next) => {
   try {
     const query = q2m(req.query)
     const projects = await projectModel.find(query.criteria, query.options.fields)
+      .populate("studentid")
       .skip(query.options.skip)
       .limit(query.options.limit)
       .sort(query.options.sort)

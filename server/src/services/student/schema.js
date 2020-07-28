@@ -1,7 +1,7 @@
 const { Schema } = require("mongoose")
 const mongoose = require("mongoose")
 const v = require("validator")
-const { project } = require("../projects/schema");
+
 
 const studentSchema = new Schema({
   name: {
@@ -56,11 +56,7 @@ const studentSchema = new Schema({
     type: String,
     required: true,
   },
-  projects: {
-    type: Schema.Types.ObjectId,
-    ref: "project",
-    required: [true, "Please add the id of projects"],
-  },
+  
   /* [{
     type: mongoose.Schema.Types.ObjectId, ref:'project' ,
     
