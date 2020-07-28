@@ -5,7 +5,7 @@ const projectModel = require("./schema")
 
 const projectRouter = express.Router()
 
-projectRouter.get("student/:id/projects", async (req, res, next) => {
+projectRouter.get("/", async (req, res, next) => {
   try {
     const query = q2m(req.query)
     const projects = await projectModel.find(query.criteria, query.options.fields)

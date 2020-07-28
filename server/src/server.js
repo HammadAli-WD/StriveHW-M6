@@ -6,6 +6,7 @@ const mongoose = require("mongoose")
 
 //const booksRouter = require("./services/books")
 const studentRouter = require("./services/student")
+const projectsRouter = require("./services/projects")
 
 const {
   notFoundHandler,
@@ -23,7 +24,7 @@ server.use(express.json())
 
 server.use(cors())
 
-//server.use("/books", booksRouter)
+server.use("/projects", projectsRouter)
 server.use("/student", studentRouter)
 
 // ERROR HANDLERS MIDDLEWARES

@@ -1,7 +1,7 @@
 const express = require("express")
 const q2m = require("query-to-mongo")
 
-const studentModel = require("./schema")
+const {studentModel} = require("./schema")
 const projectModel = require("../projects/schema")
 
 const studentsRouter = express.Router()
@@ -10,6 +10,7 @@ studentsRouter.get("/", async (req, res, next) => {
   try {
     const query = q2m(req.query)
     const students = await studentModel.find(query.criteria, query.options.fields)
+      .populate("projects")
       .skip(query.options.skip)
       .limit(query.options.limit)
       .sort(query.options.sort)
