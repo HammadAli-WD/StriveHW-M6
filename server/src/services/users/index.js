@@ -1,14 +1,14 @@
 const express = require("express");
-const { basic, adminOnly } = require("./auth");
+const { jwt } = require("./auth");
 const UserSchema = require("./schema");
 const q2m = require("query-to-mongo");
-const authenticate = require("./authTools");
+const {authenticate, verifyJWT} = require("./authTools");
 
 
 
 const usersRouter = express.Router()
 
-usersRouter.get("/me", basic, async (req, res, next) =>{
+usersRouter.get("/me", jwt, async (req, res, next) =>{
     try {
         res.send(req.user)
     } catch (error) {
@@ -16,7 +16,7 @@ usersRouter.get("/me", basic, async (req, res, next) =>{
     }
 })
 
-usersRouter.get("/", basic, adminOnly, async (req, res, next) => {
+usersRouter.get("/", async (req, res, next) => {
     try {
       const query = q2m(req.query)
   
@@ -45,7 +45,7 @@ usersRouter.post("/", async(req, res, next) => {
     }
 })
 
-usersRouter.put("/me", basic, async (req, res, next) => {
+usersRouter.put("/me", async (req, res, next) => {
     try {
       const updates = Object.keys(req.body)
   
@@ -61,7 +61,7 @@ usersRouter.put("/me", basic, async (req, res, next) => {
     }
   })
   
-  usersRouter.delete("/me", basic, async (req, res, next) => {
+  usersRouter.delete("/me", async (req, res, next) => {
     try {
       await req.user.remove()
       res.send("Deleted")
