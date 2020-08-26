@@ -3,6 +3,8 @@ const cors = require("cors")
 const { join } = require("path")
 const listEndpoints = require("express-list-endpoints")
 const mongoose = require("mongoose")
+const usersRouter = require("./services/users")
+
 
 //const booksRouter = require("./services/books")
 const studentRouter = require("./services/student")
@@ -26,7 +28,7 @@ server.use(cors())
 
 server.use("/projects", projectsRouter)
 server.use("/student", studentRouter)
-
+server.use("/users", usersRouter)
 // ERROR HANDLERS MIDDLEWARES
 
 server.use(badRequestHandler)
