@@ -11,13 +11,36 @@ const UserSchema = new Schema(
         },
         password: {
             type: String,
-            required: true
+            //required: true,
+            //minlength: 7,
         },       
         role: {
             type: String,
             enum: ["admin", "user"],
             required: true
-        }
+        },
+        name: {
+          type: String,
+          required: true,
+        },
+        surname: {
+          type: String,
+          required: true,
+        },
+        email: {
+            type: String,
+            required: true,
+            lowercase: true,
+            unique: true,
+            validate: {
+              validator: async (value) => {
+                if (!v.isEmail(value)) {
+                  throw new Error("Email is invalid")
+                }
+              },
+            },
+          },    
+        googleId: String,
     }
 )
 //https://mongoosejs.com/docs/2.7.x/docs/methods-statics.html

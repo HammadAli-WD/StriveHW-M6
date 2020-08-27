@@ -3,20 +3,49 @@ const cors = require("cors")
 const { join } = require("path")
 const listEndpoints = require("express-list-endpoints")
 const mongoose = require("mongoose")
-const usersRouter = require("./services/users")
 
+const server = express()
 
 //const booksRouter = require("./services/books")
 const studentRouter = require("./services/student")
 const projectsRouter = require("./services/projects")
+const usersRouter = require("./services/users")
+
+// initialization of oauth and cookies
+const authRouter = require("./services/users/oauth")
+const cookieParser = require("cookie-parser")
+const passport = require("passport")
+
+/* const whitelist = ["http://localhost:3001"]
+const corsOptions = {
+  origin: (origin, callback) => {
+    if (whitelist.indexOf(origin) !== -1 || !origin) {
+      callback(null, true)
+    } else {
+      callback(new Error("Not allowed by CORS"))
+    }
+  },
+  credentials: true,
+} */
+
+server.use(cookieParser());
+server.use(cors());
+
+
 
 const {
   notFoundHandler,
+  forbiddenHandler,
   badRequestHandler,
   genericErrorHandler,
 } = require("./errorHandler")
+// ERROR HANDLERS MIDDLEWARES
+server.use(badRequestHandler)
+server.use(forbiddenHandler)
+server.use(notFoundHandler)
+server.use(genericErrorHandler)
 
-const server = express()
+
 
 const port = process.env.PORT || 3000
 
@@ -29,11 +58,9 @@ server.use(cors())
 server.use("/projects", projectsRouter)
 server.use("/student", studentRouter)
 server.use("/users", usersRouter)
-// ERROR HANDLERS MIDDLEWARES
 
-server.use(badRequestHandler)
-server.use(notFoundHandler)
-server.use(genericErrorHandler)
+
+
 
 console.log(listEndpoints(server))
 

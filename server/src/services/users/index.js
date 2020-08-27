@@ -1,14 +1,15 @@
 const express = require("express");
-const { jwt } = require("./auth");
+const { authorize } = require("./auth");
 const UserSchema = require("./schema");
 const q2m = require("query-to-mongo");
 const {authenticate, verifyJWT} = require("./authTools");
+const passport = require("passport")
 
 
 
 const usersRouter = express.Router()
 
-usersRouter.get("/me", jwt, async (req, res, next) =>{
+usersRouter.get("/me", authorize, async (req, res, next) =>{
     try {
         res.send(req.user)
     } catch (error) {
@@ -16,7 +17,7 @@ usersRouter.get("/me", jwt, async (req, res, next) =>{
     }
 })
 
-usersRouter.get("/", async (req, res, next) => {
+usersRouter.get("/", authorize, async (req, res, next) => {
     try {
       const query = q2m(req.query)
   
@@ -45,7 +46,7 @@ usersRouter.post("/", async(req, res, next) => {
     }
 })
 
-usersRouter.put("/me", async (req, res, next) => {
+usersRouter.put("/me", authorize, async (req, res, next) => {
     try {
       const updates = Object.keys(req.body)
   
@@ -61,7 +62,7 @@ usersRouter.put("/me", async (req, res, next) => {
     }
   })
   
-  usersRouter.delete("/me", async (req, res, next) => {
+  usersRouter.delete("/me", authorize, async (req, res, next) => {
     try {
       await req.user.remove()
       res.send("Deleted")
@@ -69,19 +70,56 @@ usersRouter.put("/me", async (req, res, next) => {
       next(error)
     }
   })
-
   usersRouter.post('/login', async (req, res, next) => {
+    try {
+        const { username, password } = req.body
+        const user = await UserSchema.findByCredentials(username, password)
+        console.log(user)
+        //generate token
+        const token = await authenticate(user)
+        console.log(token)
+        res.send(token)
+    } catch (error) {
+        console.log(error)
+    }
+})
+
+  /* usersRouter.post('/login', async (req, res, next) => {
       try {
           const { username, password } = req.body
           const user = await UserSchema.findByCredentials(username, password)
-          console.log(user)
+         // console.log(user)
           //generate token
           const token = await authenticate(user)
-          console.log(token)
+          //console.log(token)
+          res.cookie("accessToken", token, {
+            path: "/",
+            httpOnly: true,
+            sameSite: true
+          })
           res.send(token)
       } catch (error) {
           console.log(error)
+          next(error)
       }
-  })
+  }) */
+  usersRouter.get(
+    "/googleLogin",
+    passport.authenticate("google", { scope: ["profile", "email"] })
+  )
 
+usersRouter.get("/googleRedirect", passport.authenticate("google"),
+async(req, res, next) => {
+  try {
+   // console.log(req.user)
+    const { token } = req.user.token
+    res.cookie("accessToken", token,{
+      httpOnly: true
+    })
+    res.status(200).redirect("http://localhost:3001/")
+  } catch (error) {
+   // console.log(error)
+    next(error)
+  }
+})
 module.exports = usersRouter;
